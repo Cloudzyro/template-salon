@@ -1,0 +1,68 @@
+---
+import Base from "../layouts/Base.astro";
+import LookArt from "../components/LookArt.astro";
+import { site, gallery } from "../data/site";
+---
+
+<Base title="Gallery" description="Recent color, cuts and styling from the stylists at Juniper Row Salon.">
+  <header class="page-head">
+    <div class="wrap">
+      <h1>Gallery</h1>
+      <p class="lede">Recent work from the team. Saw something you like? Book with the stylist who did it.</p>
+    </div>
+  </header>
+  <section class="section">
+    <div class="wrap">
+      <ul class="grid">
+        {gallery.map((g) => (
+          <li>
+            <figure>
+              <LookArt shape={g.shape} colors={g.colors} alt={g.alt} />
+              <figcaption>
+                <span>{g.title}</span>
+                <span class="sw" aria-hidden="true">{g.colors.map((c) => <span class="chip" style={`background:${c}`}></span>)}</span>
+                <span class="muted">by {g.by}</span>
+              </figcaption>
+            </figure>
+          </li>
+        ))}
+      </ul>
+      <p class="muted note">Illustrations stand in for your own photos.</p>
+      <a class="btn btn-primary" href={site.bookingUrl}>Book online</a>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .grid {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 32px 24px;
+  }
+  figure {
+    margin: 0;
+  }
+  figure :global(svg) {
+    border-radius: var(--r-card);
+  }
+  figcaption {
+    display: grid;
+    gap: 4px;
+    margin-top: 12px;
+  }
+  .sw {
+    display: flex;
+    gap: 4px;
+  }
+  .note {
+    margin: 32px 0 24px;
+  }
+  @media (max-width: 900px) {
+    .grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+</style>

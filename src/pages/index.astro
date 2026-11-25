@@ -1,0 +1,301 @@
+---
+import Base from "../layouts/Base.astro";
+import Swatches from "../components/Swatches.astro";
+import LookArt from "../components/LookArt.astro";
+import Portrait from "../components/Portrait.astro";
+import { site, home, menu, levels, stylists, gallery } from "../data/site";
+const levelName = (id: string) => levels.find((l) => l.id === id)?.name ?? id;
+const from = (prices: Record<string, number | null>) => Math.min(...Object.values(prices).filter((p): p is number => p !== null));
+---
+
+<Base>
+  <section class="hero">
+    <div class="wrap hero-text">
+      <h1>{home.title}</h1>
+      <div>
+        <p class="lede">{home.text}</p>
+        <div class="cta">
+          <a class="btn btn-primary" href={site.bookingUrl}>Book online</a>
+          <a class="btn btn-line" href="/services">See the menu</a>
+        </div>
+      </div>
+    </div>
+    <Swatches />
+  </section>
+
+  <section class="facts">
+    <div class="wrap row">
+      {home.facts.map((f) => <p><span class="fig">{f.figure}</span><span class="muted">{f.label}</span></p>)}
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap menu-prev">
+      <div>
+        <h2>The menu</h2>
+        <p class="lede">Starting prices by stylist level, written down before you sit in the chair.</p>
+        <a class="btn btn-line" href="/services">Full menu and durations</a>
+      </div>
+      <ul>
+        {menu.map((c) => (
+          <li>
+            <a href={`/services#${c.id}`}>
+              <span class="chip" style={`background:${c.chip}`}></span>
+              <span class="cname">{c.name}</span>
+              <span class="muted">{c.services.length} services, from ${Math.min(...c.services.map((s) => from(s.prices)))}</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <section class="section visit-steps">
+    <div class="wrap">
+      <h2>{home.introTitle}</h2>
+      <ol>
+        {home.steps.map((s, i) => (
+          <li>
+            <span class="n">{i + 1}</span>
+            <h3>{s.title}</h3>
+            <p>{s.text}</p>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap">
+      <div class="head-row">
+        <h2>Some of the team</h2>
+        <a href="/stylists">All {stylists.length} stylists</a>
+      </div>
+      <ul class="team">
+        {stylists.slice(0, 4).map((s) => (
+          <li>
+            <Portrait name={s.name} tone={s.tone} />
+            <p class="sname">{s.name}</p>
+            <p class="muted">{levelName(s.level)} &middot; {s.specialties.slice(0, 2).join(", ")}</p>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <section class="section looks">
+    <div class="wrap">
+      <div class="head-row">
+        <h2>Recent work</h2>
+        <a href="/gallery">The gallery</a>
+      </div>
+      <ul class="lgrid">
+        {gallery.slice(0, 4).map((g) => (
+          <li>
+            <LookArt shape={g.shape} colors={g.colors} alt={g.alt} />
+            <p>{g.title}</p>
+            <p class="muted">by {g.by}</p>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap gift">
+      <div>
+        <h2>{home.giftTitle}</h2>
+        <p class="lede">{home.giftText}</p>
+      </div>
+      <a class="btn btn-primary" href={site.giftCardUrl}>Buy a gift card</a>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .hero {
+    padding-top: clamp(40px, 7vw, 88px);
+    overflow: hidden;
+  }
+  .hero-text {
+    display: grid;
+    grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+    gap: clamp(24px, 5vw, 72px);
+    align-items: end;
+    margin-bottom: clamp(32px, 5vw, 56px);
+  }
+  .hero h1 {
+    margin: 0;
+  }
+  .hero .lede {
+    font-size: 1.125rem;
+  }
+  .cta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .facts {
+    border-block: 1px solid var(--line);
+    background: var(--card);
+  }
+  .row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .row p {
+    margin: 0;
+    padding: 24px 0;
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+  }
+  .row p + p {
+    padding-left: 24px;
+    border-left: 1px solid var(--line);
+  }
+  .fig {
+    font-family: var(--font-display);
+    font-size: 2rem;
+    font-variant-numeric: tabular-nums;
+  }
+  .menu-prev {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
+    gap: clamp(32px, 6vw, 96px);
+    align-items: start;
+  }
+  .menu-prev ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-top: 1px solid var(--line-strong);
+  }
+  .menu-prev a {
+    display: grid;
+    grid-template-columns: 14px 1fr auto;
+    align-items: center;
+    gap: 16px;
+    padding: 20px 0;
+    border-bottom: 1px solid var(--line);
+    text-decoration: none;
+  }
+  .cname {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+  }
+  .menu-prev a:hover .cname {
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+  .visit-steps {
+    background: var(--ink);
+    color: #f6ece6;
+  }
+  .visit-steps ol {
+    list-style: none;
+    margin: 40px 0 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 40px;
+  }
+  .visit-steps .n {
+    display: block;
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    color: #e5b7ae;
+    margin-bottom: 12px;
+  }
+  .visit-steps p {
+    color: #cdbcc4;
+  }
+  .visit-steps :focus-visible {
+    outline-color: #fff;
+  }
+  .head-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 24px;
+    flex-wrap: wrap;
+    margin-bottom: 32px;
+  }
+  .head-row h2 {
+    margin: 0;
+  }
+  .team,
+  .lgrid {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 24px;
+  }
+  .team :global(svg),
+  .lgrid :global(svg) {
+    border-radius: var(--r-card);
+  }
+  .sname {
+    font-family: var(--font-display);
+    font-size: 1.375rem;
+    margin: 16px 0 4px;
+  }
+  .team .muted,
+  .lgrid .muted {
+    margin: 0;
+  }
+  .lgrid p:not(.muted) {
+    margin: 12px 0 0;
+  }
+  .looks {
+    padding-top: 0;
+  }
+  .gift {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 32px;
+    flex-wrap: wrap;
+    padding: clamp(32px, 5vw, 56px);
+    background: var(--raised);
+    border-radius: 20px;
+  }
+  .gift .lede {
+    margin: 0;
+  }
+  @media (max-width: 900px) {
+    .hero-text,
+    .menu-prev {
+      grid-template-columns: 1fr;
+    }
+    .team,
+    .lgrid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .visit-steps ol {
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
+  }
+  @media (max-width: 600px) {
+    .row {
+      grid-template-columns: 1fr;
+    }
+    .row p,
+    .row p + p {
+      padding: 16px 0;
+      border-left: 0;
+    }
+    .row p + p {
+      border-top: 1px solid var(--line);
+    }
+    .menu-prev a {
+      grid-template-columns: 14px 1fr;
+    }
+    .menu-prev a .muted {
+      grid-column: 2;
+    }
+  }
+</style>

@@ -1,0 +1,243 @@
+---
+import "@fontsource/gilda-display";
+import "@fontsource-variable/outfit";
+import "../styles/global.css";
+import { site } from "../data/site";
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const { title, description = site.description } = Astro.props;
+const fullTitle = title ? `${title} | ${site.name}` : `${site.name} | ${site.tagline}`;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const ogImage = new URL("/og.png", Astro.site);
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "HairSalon",
+  name: site.name,
+  description: site.description,
+  telephone: site.phone,
+  email: site.email,
+  url: Astro.site?.toString(),
+  address: {
+    "@type": "PostalAddress",
+    streetAddress: site.address.street,
+    addressLocality: site.address.city,
+    addressRegion: site.address.region,
+    postalCode: site.address.postal,
+  },
+};
+const links = [
+  { href: "/services", label: "Services" },
+  { href: "/stylists", label: "Stylists" },
+  { href: "/gallery", label: "Gallery" },
+  { href: "/visit", label: "Visit" },
+];
+const path = Astro.url.pathname.replace(/\/$/, "") || "/";
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <meta name="theme-color" content="#f8efe9" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={site.name} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <script type="application/ld+json" set:html={JSON.stringify(schema)} />
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+    <header class="wrap top">
+      <a class="brand" href="/">{site.name}</a>
+      <nav aria-label="Main">
+        <ul>
+          {links.map((l) => <li><a href={l.href} aria-current={path === l.href ? "page" : undefined}>{l.label}</a></li>)}
+          <li><a href={site.giftCardUrl}>Gift cards</a></li>
+        </ul>
+      </nav>
+      <a class="btn btn-primary btn-sm book" href={site.bookingUrl}>Book online</a>
+      <details class="menu">
+        <summary>Menu</summary>
+        <ul>
+          {links.map((l) => <li><a href={l.href}>{l.label}</a></li>)}
+          <li><a href={site.giftCardUrl}>Gift cards</a></li>
+          <li><a href={site.bookingUrl}>Book online</a></li>
+        </ul>
+      </details>
+    </header>
+    <main id="main">
+      <slot />
+    </main>
+    <footer class="foot">
+      <div class="wrap cols">
+        <div>
+          <p class="fname">{site.name}</p>
+          <p class="muted">{site.address.street}, {site.address.city}, {site.address.region} {site.address.postal}</p>
+          <p class="muted"><a href={`tel:${site.phone.replace(/[^\d+]/g, "")}`}>{site.phone}</a> &middot; <a href={`mailto:${site.email}`}>{site.email}</a></p>
+        </div>
+        <dl>
+          {site.hours.map((h) => <div><dt>{h.days}</dt><dd>{h.time}</dd></div>)}
+        </dl>
+        <ul>
+          {links.map((l) => <li><a href={l.href}>{l.label}</a></li>)}
+          <li><a href={site.giftCardUrl}>Gift cards</a></li>
+          {site.social.map((s) => <li><a href={s.url}>{s.label}</a></li>)}
+        </ul>
+      </div>
+      <p class="wrap muted fine">&copy; {new Date().getFullYear()} {site.name}</p>
+    </footer>
+  </body>
+</html>
+
+<style>
+  .top {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+    min-height: 80px;
+  }
+  .brand {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+  nav {
+    margin-left: auto;
+  }
+  nav ul {
+    display: flex;
+    gap: 28px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  nav a {
+    text-decoration: none;
+    color: var(--ink-2);
+    transition: color 160ms var(--ease);
+  }
+  nav a:hover,
+  nav a[aria-current="page"] {
+    color: var(--ink);
+  }
+  nav a[aria-current="page"] {
+    text-decoration: underline;
+    text-underline-offset: 8px;
+    text-decoration-color: var(--accent);
+  }
+  .menu {
+    display: none;
+    margin-left: auto;
+    position: relative;
+  }
+  .menu summary {
+    list-style: none;
+    cursor: pointer;
+    padding: 8px 16px;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--r-control);
+  }
+  .menu summary::-webkit-details-marker {
+    display: none;
+  }
+  .menu ul {
+    position: absolute;
+    right: 0;
+    top: calc(100% + 8px);
+    z-index: 5;
+    min-width: 220px;
+    list-style: none;
+    margin: 0;
+    padding: 8px;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--r-card);
+    box-shadow: 0 8px 24px rgba(43, 26, 36, 0.08);
+  }
+  .menu a {
+    display: block;
+    padding: 10px 12px;
+    border-radius: 8px;
+    text-decoration: none;
+  }
+  .menu a:hover {
+    background: var(--raised);
+  }
+  .foot {
+    border-top: 1px solid var(--line);
+    padding-block: 56px 32px;
+    margin-top: 32px;
+  }
+  .cols {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr 0.8fr;
+    gap: 40px;
+  }
+  .fname {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+  }
+  dl {
+    margin: 0;
+  }
+  dl div {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    padding-block: 6px;
+    border-bottom: 1px solid var(--line);
+    font-size: 0.9375rem;
+  }
+  dt {
+    color: var(--ink-2);
+  }
+  dd {
+    margin: 0;
+  }
+  .foot ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 6px;
+  }
+  .foot ul a {
+    text-decoration: none;
+    color: var(--ink-2);
+  }
+  .foot ul a:hover {
+    color: var(--ink);
+    text-decoration: underline;
+  }
+  .fine {
+    margin-top: 40px;
+  }
+  @media (max-width: 900px) {
+    nav,
+    .book {
+      display: none;
+    }
+    .menu {
+      display: block;
+    }
+    .cols {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

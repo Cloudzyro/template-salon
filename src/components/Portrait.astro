@@ -1,0 +1,18 @@
+---
+// Portrait placeholder: initials on the stylist's own swatch color.
+interface Props {
+  name: string;
+  tone: string;
+}
+const { name, tone } = Astro.props;
+const initials = name.split(" ").map((p) => p[0]).join("").slice(0, 2);
+const light = ["#d9b27c", "#e3c08a", "#c98b84", "#e5b7ae", "#dedad3", "#b9b5af"].includes(tone);
+---
+
+<svg viewBox="0 0 240 300" role="img" aria-label={`Portrait placeholder for ${name}`}>
+  <rect width="240" height="300" fill="#efe3da"></rect>
+  <path d="M40 300 C44 230 84 206 120 206 C156 206 196 230 200 300 Z" fill="#cdbdb4"></path>
+  <ellipse cx="120" cy="128" rx="58" ry="66" fill={tone}></ellipse>
+  <ellipse cx="120" cy="140" rx="40" ry="50" fill="#d9b79c"></ellipse>
+  <text x="120" y="152" text-anchor="middle" font-family="Gilda Display, serif" font-size="32" fill={light ? "#2b1a24" : "#2b1a24"} opacity="0.7">{initials}</text>
+</svg>

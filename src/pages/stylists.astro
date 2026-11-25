@@ -1,0 +1,124 @@
+---
+import Base from "../layouts/Base.astro";
+import Portrait from "../components/Portrait.astro";
+import { site, stylists, levels } from "../data/site";
+---
+
+<Base title="Stylists" description="Meet the stylists at Juniper Row Salon, their levels, specialties and days in the studio.">
+  <header class="page-head">
+    <div class="wrap">
+      <h1>The stylists</h1>
+      <p class="lede">Prices follow each stylist's level. Choose by experience, by budget or by a look you liked, and book with them directly.</p>
+    </div>
+  </header>
+  {
+    [...levels].reverse().map((l) => {
+      const people = stylists.filter((s) => s.level === l.id);
+      if (!people.length) return null;
+      return (
+        <section class="section level" aria-labelledby={`lv-${l.id}`}>
+          <div class="wrap">
+            <div class="lv-head">
+              <h2 id={`lv-${l.id}`}>{l.name}</h2>
+              <p class="muted">{l.note}</p>
+            </div>
+            <ul class="grid">
+              {people.map((s) => (
+                <li>
+                  <Portrait name={s.name} tone={s.tone} />
+                  <div class="body">
+                    <h3>{s.name}</h3>
+                    <p class="muted">{s.pronouns && <>{s.pronouns} &middot; </>}With us since {s.since}</p>
+                    <p>{s.bio}</p>
+                    <dl>
+                      <div><dt>Specialties</dt><dd>{s.specialties.join(", ")}</dd></div>
+                      <div><dt>In the studio</dt><dd>{s.days}</dd></div>
+                    </dl>
+                    <a class="btn btn-line btn-sm" href={s.bookingUrl || site.bookingUrl}>Book with {s.name.split(" ")[0]}</a>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+      );
+    })
+  }
+</Base>
+
+<style>
+  .level {
+    padding-block: 32px;
+  }
+  .lv-head {
+    display: flex;
+    align-items: baseline;
+    gap: 8px 24px;
+    flex-wrap: wrap;
+    border-top: 1px solid var(--line-strong);
+    padding-top: 24px;
+    margin-bottom: 24px;
+  }
+  .lv-head h2 {
+    font-size: 2rem;
+    margin: 0;
+  }
+  .lv-head p {
+    margin: 0;
+  }
+  .grid {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px;
+  }
+  .grid li {
+    display: grid;
+    grid-template-columns: 160px minmax(0, 1fr);
+    gap: 24px;
+    padding: 20px;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--r-card);
+  }
+  .grid :global(svg) {
+    width: 160px;
+    height: auto;
+    border-radius: 8px;
+  }
+  h3 {
+    margin-bottom: 4px;
+  }
+  .body > p:not(.muted) {
+    color: var(--ink-2);
+  }
+  dl {
+    margin: 0 0 16px;
+    font-size: 0.9375rem;
+  }
+  dl div {
+    padding-block: 6px;
+    border-top: 1px solid var(--line);
+  }
+  dt {
+    color: var(--muted);
+  }
+  dd {
+    margin: 0;
+  }
+  @media (max-width: 960px) {
+    .grid {
+      grid-template-columns: 1fr;
+    }
+  }
+  @media (max-width: 520px) {
+    .grid li {
+      grid-template-columns: 1fr;
+    }
+    .grid :global(svg) {
+      width: 120px;
+    }
+  }
+</style>

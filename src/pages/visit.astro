@@ -1,0 +1,117 @@
+---
+import Base from "../layouts/Base.astro";
+import Form from "../components/Form.astro";
+import { site, policies, stylists } from "../data/site";
+const tel = `tel:${site.phone.replace(/[^\d+]/g, "")}`;
+---
+
+<Base title="Visit" description={`Hours, address, policies and how to reach ${site.name}.`}>
+  <header class="page-head">
+    <div class="wrap">
+      <h1>Visit the studio</h1>
+      <p class="lede">{site.address.street}, {site.address.city}. Book online any time, call us during opening hours, or send a question below.</p>
+    </div>
+  </header>
+  <section class="section">
+    <div class="wrap grid">
+      <div>
+        <h2>Hours</h2>
+        <dl class="hours">
+          {site.hours.map((h) => <div><dt>{h.days}</dt><dd>{h.time}</dd></div>)}
+        </dl>
+        <h2 class="mt">Find us</h2>
+        <p>{site.address.street}<br />{site.address.city}, {site.address.region} {site.address.postal}</p>
+        <p><a href={site.mapsUrl}>Open in maps</a> &middot; <a href={tel}>{site.phone}</a></p>
+        <p class="muted">Two-hour street parking on Juniper Row and a free lot behind the library.</p>
+      </div>
+      <div class="ask">
+        <h2>Ask us something</h2>
+        <p class="muted">Questions about color, a wedding party or a gift card. For appointments, booking online is quickest.</p>
+        <Form subject={`Question for ${site.name}`} submitLabel="Send question" thanks="Thank you. We'll reply within one working day.">
+          <div class="fields">
+            <label class="field"><span>Your name</span><input name="name" autocomplete="name" required /></label>
+            <label class="field"><span>Email</span><input name="email" type="email" autocomplete="email" required /></label>
+          </div>
+          <label class="field">
+            <span>Stylist <small>(optional)</small></span>
+            <select name="stylist">
+              <option>No preference</option>
+              {stylists.map((s) => <option>{s.name}</option>)}
+            </select>
+          </label>
+          <label class="field"><span>Your question</span><textarea name="message" rows="5" required></textarea></label>
+        </Form>
+      </div>
+    </div>
+  </section>
+  <section class="section policies" id="policies">
+    <div class="wrap">
+      <h2>Policies</h2>
+      <dl class="pol">
+        {policies.map((p) => <div><dt>{p.title}</dt><dd>{p.text}</dd></div>)}
+      </dl>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
+    gap: clamp(32px, 6vw, 96px);
+    align-items: start;
+  }
+  h2 {
+    font-size: 2rem;
+  }
+  .mt {
+    margin-top: 48px;
+  }
+  .hours {
+    margin: 0;
+  }
+  .hours div {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    padding-block: 12px;
+    border-bottom: 1px solid var(--line);
+  }
+  .hours dd {
+    margin: 0;
+  }
+  .ask {
+    padding: clamp(20px, 3vw, 32px);
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--r-card);
+  }
+  .policies {
+    padding-top: 0;
+  }
+  .pol {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0 48px;
+    margin: 24px 0 0;
+  }
+  .pol div {
+    padding-block: 20px;
+    border-top: 1px solid var(--line);
+  }
+  .pol dt {
+    font-family: var(--font-display);
+    font-size: 1.375rem;
+    margin-bottom: 4px;
+  }
+  .pol dd {
+    margin: 0;
+    color: var(--ink-2);
+  }
+  @media (max-width: 860px) {
+    .grid,
+    .pol {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

@@ -1,0 +1,53 @@
+---
+// Illustrated placeholder for a gallery look. Replace with photos when you have them.
+interface Props {
+  shape: string;
+  colors: string[];
+  alt: string;
+}
+const { shape, colors, alt } = Astro.props;
+const [a, b, c] = colors;
+const skin = "#d9b79c";
+const id = `g${Math.abs(alt.split("").reduce((h, ch) => (h * 31 + ch.charCodeAt(0)) | 0, 7))}`;
+const hair: Record<string, string> = {
+  bob: "M110 120 C110 60 290 60 290 120 L300 260 C300 270 280 276 268 268 L262 200 L138 200 L132 268 C120 276 100 270 100 260 Z",
+  long: "M108 120 C108 56 292 56 292 120 C300 220 316 330 300 380 L100 380 C84 330 100 220 108 120 Z",
+  curly: "M80 150 C60 90 110 40 160 50 C190 20 240 22 262 52 C318 52 344 104 326 152 C352 190 334 248 296 256 L104 256 C64 246 52 190 80 150 Z",
+  crop: "M118 132 C112 70 288 70 282 132 L280 160 C270 140 130 140 120 160 Z",
+  shoulder: "M106 124 C106 58 294 58 294 124 C298 190 306 260 298 312 L102 312 C94 260 102 190 106 124 Z",
+  knot: "M116 124 C116 64 284 64 284 124 L282 220 L118 220 Z M170 230 C170 206 230 206 230 230 C230 258 170 258 170 230 Z",
+  straight: "M112 120 C112 58 288 58 288 120 L292 380 L108 380 Z",
+};
+const d = hair[shape] ?? hair.shoulder;
+const back = shape === "knot";
+---
+
+<svg viewBox="0 0 400 400" role="img" aria-label={alt}>
+  <defs>
+    <linearGradient id={id} x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color={a}></stop>
+      <stop offset="0.55" stop-color={b}></stop>
+      <stop offset="1" stop-color={c}></stop>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="400" fill="#efe3da"></rect>
+  <path d="M140 400 C140 330 160 300 200 300 C240 300 260 330 260 400 Z" fill={skin}></path>
+  <path d="M80 400 C90 350 140 330 200 330 C260 330 310 350 320 400 Z" fill="#cdbdb4"></path>
+  {!back && <ellipse cx="200" cy="170" rx="74" ry="92" fill={skin}></ellipse>}
+  <path d={d} fill={`url(#${id})`}></path>
+  {back && <ellipse cx="200" cy="150" rx="84" ry="70" fill={`url(#${id})`}></ellipse>}
+  {
+    !back && shape !== "crop" && shape !== "curly" && (
+      <path d="M200 70 C170 90 140 110 124 150 M200 70 C230 90 260 110 276 150" stroke="rgba(0,0,0,0.12)" stroke-width="3" fill="none"></path>
+    )
+  }
+  {!back && <ellipse cx="200" cy="185" rx="56" ry="72" fill={skin}></ellipse>}
+  {shape === "crop" && <path d="M126 150 C140 100 260 100 274 150 C250 120 150 120 126 150 Z" fill={`url(#${id})`}></path>}
+</svg>
+
+<style>
+  svg {
+    width: 100%;
+    height: auto;
+  }
+</style>

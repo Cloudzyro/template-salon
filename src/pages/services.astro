@@ -1,0 +1,186 @@
+---
+import Base from "../layouts/Base.astro";
+import { site, menu, levels } from "../data/site";
+---
+
+<Base title="Services and prices" description="Cuts, color, lightening, treatments, brows and makeup, with starting prices by stylist level and times.">
+  <header class="page-head">
+    <div class="wrap">
+      <h1>Services and prices</h1>
+      <p class="lede">Starting prices in dollars by stylist level, and how long each service takes. We confirm the final price at your consultation, never as a surprise at the desk.</p>
+      <nav class="jump" aria-label="Menu sections">
+        {menu.map((c) => <a href={`#${c.id}`}><span class="chip" style={`background:${c.chip}`}></span>{c.name}</a>)}
+      </nav>
+    </div>
+  </header>
+  <section class="section">
+    <div class="wrap">
+      <dl class="levels">
+        {levels.map((l) => <div><dt>{l.name}</dt><dd>{l.note}</dd></div>)}
+      </dl>
+      {
+        menu.map((c) => (
+          <section class="cat" id={c.id} aria-labelledby={`h-${c.id}`}>
+            <div class="cat-head">
+              <h2 id={`h-${c.id}`}><span class="chip" style={`background:${c.chip}`}></span>{c.name}</h2>
+              {c.note && <p class="muted">{c.note}</p>}
+            </div>
+            <div class="scroll">
+              <table>
+                <thead>
+                  <tr>
+                    <th scope="col">Service</th>
+                    <th scope="col" class="num">Time</th>
+                    {levels.map((l) => <th scope="col" class="num">{l.name}</th>)}
+                  </tr>
+                </thead>
+                <tbody>
+                  {c.services.map((s) => (
+                    <tr>
+                      <th scope="row">
+                        {s.name}
+                        {s.detail && <span class="detail">{s.detail}</span>}
+                      </th>
+                      <td class="num muted">{s.minutes} min</td>
+                      {levels.map((l) => (
+                        <td class="num">{s.prices[l.id] === null ? <span class="muted" aria-label="Not offered">n/a</span> : `$${s.prices[l.id]}`}</td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </section>
+        ))
+      }
+      <div class="end">
+        <a class="btn btn-primary" href={site.bookingUrl}>Book online</a>
+        <a class="btn btn-line" href="/visit#policies">Our policies</a>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .jump {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 32px;
+  }
+  .jump a {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--r-control);
+    text-decoration: none;
+    font-size: 0.9375rem;
+    transition: background-color 160ms var(--ease);
+  }
+  .jump a:hover {
+    background: var(--raised);
+  }
+  .levels {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    margin: 0 0 48px;
+    border-top: 1px solid var(--line-strong);
+  }
+  .levels div {
+    padding: 16px 16px 16px 0;
+  }
+  .levels div + div {
+    padding-left: 16px;
+    border-left: 1px solid var(--line);
+  }
+  .levels dt {
+    font-weight: 500;
+  }
+  .levels dd {
+    margin: 4px 0 0;
+    color: var(--ink-2);
+    font-size: 0.9375rem;
+  }
+  .cat {
+    padding-block: 32px;
+    scroll-margin-top: 24px;
+  }
+  .cat-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 8px 32px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+  }
+  .cat-head h2 {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    font-size: clamp(1.75rem, 3vw, 2.25rem);
+    margin: 0;
+  }
+  .cat-head h2 .chip {
+    width: 18px;
+    height: 18px;
+  }
+  .cat-head p {
+    margin: 0;
+    max-width: 34rem;
+  }
+  .scroll {
+    overflow-x: auto;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-variant-numeric: tabular-nums;
+    min-width: 620px;
+  }
+  th,
+  td {
+    text-align: left;
+    padding: 14px 12px 14px 0;
+    border-bottom: 1px solid var(--line);
+    vertical-align: top;
+  }
+  thead th {
+    font-weight: 400;
+    color: var(--muted);
+    font-size: 0.875rem;
+    border-bottom-color: var(--line-strong);
+  }
+  tbody th {
+    font-weight: 500;
+  }
+  .detail {
+    display: block;
+    font-weight: 400;
+    color: var(--muted);
+    font-size: 0.875rem;
+  }
+  .num {
+    text-align: right;
+    white-space: nowrap;
+    width: 96px;
+  }
+  .end {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 40px;
+  }
+  @media (max-width: 760px) {
+    .levels {
+      grid-template-columns: 1fr 1fr;
+    }
+    .levels div,
+    .levels div + div {
+      padding: 12px 12px 12px 0;
+      border-left: 0;
+    }
+  }
+</style>

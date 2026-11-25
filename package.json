@@ -1,0 +1,23 @@
+{
+  "name": "template-salon",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A hair and beauty salon website template built with Astro.",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview"
+  },
+  "dependencies": {
+    "@astrojs/sitemap": "3.7.4",
+    "@fontsource/gilda-display": "5.3.0",
+    "@fontsource-variable/outfit": "5.3.0",
+    "astro": "7.4.8"
+  },
+  "engines": {
+    "node": ">=22.23.4"
+  },
+  "packageManager": "pnpm@12.10.1"
+}
